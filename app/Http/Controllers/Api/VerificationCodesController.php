@@ -6,14 +6,31 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Api\VerificationCodeRequest;
 use Overtrue\EasySms\EasySms;
 use Illuminate\Support\Str;
+use Illuminate\Auth\AuthenticationException;
 
 class VerificationCodesController extends Controller
 {
     // 发送短信接口
     public function store(VerificationCodeRequest $request, EasySms $easySms)
     {
+
+        // 获取图片验证码
+        $captchaData = \Cache::get($request->captcha_key);
+
+        if (!$captchaData) {
+            abort(403, '图片验证码已失效');
+        }
+
+        if (!hash_equals($captchaData['code'], $request->captcha_code)) {
+            // 验证错误就清除缓存
+            \Cache::forget($request->captcha_key);
+            throw new AuthenticationException('验证码错误');
+        }
+
+
         // 获取手机号
-        $phone = $request->phone;
+        // $phone = $request->phone;
+        $phone = $captchaData['phone'];
 
         // 本地环境下使用 1234
         if (!app()->environment('production')) {
@@ -40,6 +57,9 @@ class VerificationCodesController extends Controller
 
         // 缓存验证码 5 分钟过期。
         \Cache::put($key, ['phone' => $phone, 'code' => $code], $expiredAt);
+
+        // 清除图片验证码缓存
+        \Cache::forget($request->captcha_key);
 
         return response()->json([
             'key' => $key,
