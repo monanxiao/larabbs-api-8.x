@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,5 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
         // 使用 boostatrap 样式
         \Illuminate\Pagination\Paginator::useBootstrap();
+
+        JsonResource::withoutWrapping();
     }
 }
