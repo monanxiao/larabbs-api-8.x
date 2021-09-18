@@ -25,6 +25,7 @@ class UserResource extends JsonResource
         return $data;
     }
 
+    // 假如调用了此方法，说明已经登陆，无需隐藏字段
     public function showSensitiveFields()
     {
         $this->showSensitiveFields = true;

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\Api\UserRequest;
 use Illuminate\Auth\AuthenticationException;
+use App\Models\Image;
 
 class UsersController extends Controller
 {
@@ -52,4 +53,25 @@ class UsersController extends Controller
         return (new UserResource($request->user()))->showSensitiveFields();
     }
 
+    // 修改用户资料
+    public function update(UserRequest $request)
+    {
+        // 当前登录用户
+        $user = $request->user();
+        // 字段白名单
+        $attributes = $request->only(['name', 'email', 'introduction']);
+        // 检测是否存在 头像id
+        if ($request->avatar_image_id) {
+            // 获取图片ID实例
+            $image = Image::find($request->avatar_image_id);
+            // 赋值头像路径
+            $attributes['avatar'] = $image->path;
+        }
+
+        // 更新用户资源
+        $user->update($attributes);
+
+        // 返回当前用户资源，并显示全部字段
+        return (new UserResource($user))->showSensitiveFields();
+    }
 }
