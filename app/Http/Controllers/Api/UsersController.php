@@ -37,6 +37,19 @@ class UsersController extends Controller
         // 清除验证码缓存
         \Cache::forget($request->verification_key);
 
+        return (new UserResource($user))->showSensitiveFields();
+    }
+
+    // 某个用户详情
+    public function show(User $user, Request $request)
+    {
         return new UserResource($user);
     }
+
+    // 个人详情
+    public function me(Request $request)
+    {
+        return (new UserResource($request->user()))->showSensitiveFields();
+    }
+
 }
