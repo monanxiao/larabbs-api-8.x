@@ -33,5 +33,14 @@ class TopicsController extends Controller
         return new TopicResource($topic);// 返回资源
     }
 
+    // 话题删除
+    public function destroy(Topic $topic)
+    {
+        // 验证是否有权限删除
+        $this->authorize('destroy', $topic);
+        $topic->delete();// 删除成功
+
+        return response(null, 204);
+    }
 
 }
