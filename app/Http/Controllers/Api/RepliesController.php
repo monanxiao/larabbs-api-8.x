@@ -7,9 +7,26 @@ use App\Models\Topic;
 use App\Models\Reply;
 use App\Http\Resources\ReplyResource;
 use App\Http\Requests\Api\ReplyRequest;
+use App\Http\Queries\ReplyQuery;
 
 class RepliesController extends Controller
 {
+    // 回复列表
+    public function index($topicId, ReplyQuery $query)
+    {
+        $replies = $query->where('topic_id', $topicId)->paginate();
+
+        return ReplyResource::collection($replies);
+    }
+
+    // 某个用户的回复列表
+    public function userIndex($userId, ReplyQuery $query)
+    {
+        $replies = $query->where('user_id', $userId)->paginate();
+
+        return ReplyResource::collection($replies);
+    }
+
     // 发布回复
     public function store(ReplyRequest $request, Topic $topic, Reply $reply)
     {
