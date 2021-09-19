@@ -22,4 +22,16 @@ class TopicsController extends Controller
 
     }
 
+    // 话题修改(更新、编辑)
+    public function update(TopicRequest $request, Topic $topic)
+    {
+
+        $this->authorize('update', $topic);// 验证是否有权限修改 策略
+
+        $topic->update($request->all());// 修改数据
+
+        return new TopicResource($topic);// 返回资源
+    }
+
+
 }
