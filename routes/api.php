@@ -103,6 +103,10 @@ Route::prefix('v1')->namespace('Api')->name('api.v1.')->group(function() {
                 Route::post('topics/{topic}/replies', 'RepliesController@store')
                     ->name('topics.replies.store');
 
+                // 删除回复
+                Route::delete('topics/{topic}/replies/{reply}', 'RepliesController@destroy')
+                    ->name('topics.replies.destroy');
+
             });
 
         });
