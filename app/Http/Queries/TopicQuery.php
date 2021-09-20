@@ -12,7 +12,7 @@ class TopicQuery extends QueryBuilder
     {
         parent::__construct(Topic::query());
 
-        $this->allowedIncludes('user', 'category') // 预加载的方法 传入某个，返回某个数据，默认不返回
+        $this->allowedIncludes('user', 'category', 'user.roles') // 预加载的方法 传入某个，返回某个数据，默认不返回
             ->allowedFilters([// 传入被搜索的数据
                 'title',
                 AllowedFilter::exact('category_id'), // 分类ID

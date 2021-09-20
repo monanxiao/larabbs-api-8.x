@@ -21,6 +21,7 @@ class UserResource extends JsonResource
 
         $data['bound_phone'] = $this->resource->phone ? true : false;
         $data['bound_wechat'] = ($this->resource->weixin_unionid || $this->resource->weixin_openid) ? true : false;
+        $data['roles'] = RoleResource::collection($this->whenloaded('roles')); // 加载用户拥有的权限
 
         return $data;
     }
