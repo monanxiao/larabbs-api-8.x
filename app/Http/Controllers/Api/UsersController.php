@@ -59,7 +59,7 @@ class UsersController extends Controller
         // 当前登录用户
         $user = $request->user();
         // 字段白名单
-        $attributes = $request->only(['name', 'email', 'introduction']);
+        $attributes = $request->only(['name', 'email', 'introduction', 'registration_id']);
         // 检测是否存在 头像id
         if ($request->avatar_image_id) {
             // 获取图片ID实例
