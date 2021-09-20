@@ -91,6 +91,9 @@ Route::prefix('v1')->namespace('Api')->name('api.v1.')->group(function() {
             Route::get('links', 'LinksController@index')
                 ->name('links.index');
 
+            // 活跃用户
+            Route::get('actived/users', 'UsersController@activedIndex')
+                ->name('actived.users.index');
 
             // 登陆后可以访问的接口
             Route::middleware('auth:api')->group(function() {

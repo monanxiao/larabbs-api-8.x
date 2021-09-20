@@ -74,4 +74,11 @@ class UsersController extends Controller
         // 返回当前用户资源，并显示全部字段
         return (new UserResource($user))->showSensitiveFields();
     }
+
+    // 活跃用户
+    public function activedIndex(User $user)
+    {
+        UserResource::wrap('data');// 数据包含
+        return UserResource::collection($user->getActiveUsers());
+    }
 }
