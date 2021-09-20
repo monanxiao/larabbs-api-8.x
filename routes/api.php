@@ -87,6 +87,10 @@ Route::prefix('v1')->namespace('Api')->name('api.v1.')->group(function() {
             Route::get('users/{user}/replies', 'RepliesController@userIndex')
                 ->name('users.replies.index');
 
+            // 资源推荐
+            Route::get('links', 'LinksController@index')
+                ->name('links.index');
+
 
             // 登陆后可以访问的接口
             Route::middleware('auth:api')->group(function() {
