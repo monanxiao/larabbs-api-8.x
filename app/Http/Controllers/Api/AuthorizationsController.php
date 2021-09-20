@@ -28,7 +28,8 @@ class AuthorizationsController extends Controller
         // 执行登录
         if (!$token = \Auth::guard('api')->attempt($credentials)) {
             // 登陆失败就报错
-            throw new AuthenticationException('用户名或密码错误');
+            // throw new AuthenticationException('用户名或密码错误');
+            throw new AuthenticationException(trans('auth.failed'));// 本地化接口
         }
 
         return $this->respondWithToken($token)->setStatusCode(201);

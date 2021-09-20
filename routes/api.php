@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::prefix('v1')->namespace('Api')->name('api.v1.')->group(function() {
+Route::prefix('v1')->namespace('Api')->middleware('change-locale')->name('api.v1.')->group(function() {
 
     // 节流限制
     Route::middleware('throttle:' . config('api.rate_limits.sign'))

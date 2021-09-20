@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Arr;
 
 class Handler extends ExceptionHandler
 {
@@ -26,6 +27,24 @@ class Handler extends ExceptionHandler
         'password',
         'password_confirmation',
     ];
+
+    // 错误响应增加 code 参数 重写此方法
+    protected function convertExceptionToArray(Throwable $e)
+    {
+        return config('app.debug') ? [
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'exception' => get_class($e),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => collect($e->getTrace())->map(function ($trace) {
+                return Arr::except($trace, ['args']);
+            })->all(),
+        ] : [
+            'message' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
+            'code' => $e->getCode(),
+        ];
+    }
 
     /**
      * Register the exception handling callbacks for the application.
