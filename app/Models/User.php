@@ -6,10 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+// use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Auth;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
@@ -134,5 +135,13 @@ class User extends Authenticatable implements MustVerifyEmailContract
         $this->attributes['avatar'] = $path;
     }
 
+    public function findForPassport($username)
+    {
+        filter_var($username, FILTER_VALIDATE_EMAIL) ?
+          $credentials['email'] = $username :
+          $credentials['phone'] = $username;
+
+        return self::where($credentials)->first();
+    }
 
 }

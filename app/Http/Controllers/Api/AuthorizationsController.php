@@ -8,33 +8,55 @@ use Illuminate\Support\Arr;
 use Illuminate\Auth\AuthenticationException;
 use App\Http\Requests\Api\SocialAuthorizationRequest;
 use App\Http\Requests\Api\AuthorizationRequest;
+use Psr\Http\Message\ServerRequestInterface;
+use Laravel\Passport\Http\Controllers\AccessTokenController;
 
-class AuthorizationsController extends Controller
+class AuthorizationsController extends AccessTokenController
 {
-    // 账号密码登录
-    public function store(AuthorizationRequest $request)
+    public function store(ServerRequestInterface $request)
     {
-        // 获取用户名
-        $username = $request->username;
-
-        // 检测是否邮箱
-        filter_var($username, FILTER_VALIDATE_EMAIL) ?
-            $credentials['email'] = $username :
-            $credentials['phone'] = $username;
-
-        // 获取密码
-        $credentials['password'] = $request->password;
-
-        // 执行登录
-        if (!$token = \Auth::guard('api')->attempt($credentials)) {
-            // 登陆失败就报错
-            // throw new AuthenticationException('用户名或密码错误');
-            throw new AuthenticationException(trans('auth.failed'));// 本地化接口
-        }
-
-        return $this->respondWithToken($token)->setStatusCode(201);
-
+        return $this->issueToken($request)->setStatusCode(201);
     }
+
+    public function update(ServerRequestInterface $request)
+    {
+        return $this->issueToken($request);
+    }
+
+     public function destroy()
+    {
+        if (auth('api')->check()) {
+            auth('api')->user()->token()->revoke();
+            return response(null, 204);
+        } else {
+            throw new AuthenticationException('The token is invalid.');
+        }
+    }
+
+    // // 账号密码登录
+    // public function store(AuthorizationRequest $request)
+    // {
+    //     // 获取用户名
+    //     $username = $request->username;
+
+    //     // 检测是否邮箱
+    //     filter_var($username, FILTER_VALIDATE_EMAIL) ?
+    //         $credentials['email'] = $username :
+    //         $credentials['phone'] = $username;
+
+    //     // 获取密码
+    //     $credentials['password'] = $request->password;
+
+    //     // 执行登录
+    //     if (!$token = \Auth::guard('api')->attempt($credentials)) {
+    //         // 登陆失败就报错
+    //         // throw new AuthenticationException('用户名或密码错误');
+    //         throw new AuthenticationException(trans('auth.failed'));// 本地化接口
+    //     }
+
+    //     return $this->respondWithToken($token)->setStatusCode(201);
+
+    // }
 
     // 第三方登录
     public function socialStore($type, SocialAuthorizationRequest $request)
@@ -109,18 +131,19 @@ class AuthorizationsController extends Controller
     }
 
     // 更新用户 token
-    public function update()
-    {
-        $token = auth('api')->refresh();
-        return $this->respondWithToken($token);
-    }
+    // public function update()
+    // {
+    //     $token = auth('api')->refresh();
+    //     return $this->respondWithToken($token);
+    // }
+
 
     // 删除用户 token 退出登录
-    public function destroy()
-    {
-        auth('api')->logout();
-        return response(null, 204);
-    }
+    // public function destroy()
+    // {
+    //     auth('api')->logout();
+    //     return response(null, 204);
+    // }
 
     // 统一返回格式
     protected function respondWithToken($token)
